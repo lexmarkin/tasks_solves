@@ -1,51 +1,41 @@
 #include <bits/stdc++.h>
-#define ll long long
 
 using namespace std;
 
-bool cmp(pair<ll, string> a, pair<ll, string> b) {
-    if (a.first != b.first) {
-        return a.first > b.first;
-    }
-    return a.second < b.second;
-}
-
 int main() {
-    map<string, map<string, ll>> data;
-    map<string, ll> cost, guys;
-    string s;
-    ll n, val;
+    stack<int> st;
+    queue<int> op;
+    int n;
     cin >> n;
-    for (ll i = 0; i < n; i++) {
-        cin >> s >> val;
-        cost[s] = val;
-    }
-    string man;
-    ll c;
-    cin >> c;
-    for (ll i = 0; i < c; i++) {
-        cin >> s >> man;
-        data[s][man]++;
-        guys[man] = 0;
-    }
-    man = "";
-    for (auto i: data) {
-        ll mx = -1;
-        for (auto m: i.second) {
-            if (mx < m.second) {
-                mx = m.second;
-                man = m.first;
-            }
+    int num = 1;
+    for (int i = 0; i < n; i++) {
+        int val;
+        cin >> val;
+        if (!st.empty() && val > st.top()) {
+            cout << 0;
+            return 0;
         }
-        guys[man] += cost[i.first];
+        op.push(1);
+        st.push(val);
+        while (!st.empty() && st.top() == num) {
+            op.push(2);
+            st.pop();
+            num++;
+        }
     }
-    vector<pair<ll, string>> ans;
-    for (auto i: guys) {
-        ans.emplace_back(i.second, i.first);
+    int val = op.front();
+    op.pop();
+    int count = 1;
+    while (!op.empty()) {
+        if (op.front() == val) {
+            count++;
+        } else {
+            cout << val << ' ' << count << '\n';
+            val = op.front();
+            count = 1;
+        }
+        op.pop();
     }
-    sort(ans.begin(), ans.end(), cmp);
-    for (auto i: ans) {
-        cout << i.second << ' ' << i.first << '\n';
-    }
+    cout << val << ' ' << count;
     return 0;
 }
